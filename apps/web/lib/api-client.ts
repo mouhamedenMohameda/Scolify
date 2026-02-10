@@ -80,14 +80,14 @@ export async function apiGet<T>(
   params?: Record<string, string | number>
 ): Promise<ApiResponse<T>> {
   // Remove /api/ prefix if present, and ensure endpoint starts with /
-  let cleanEndpoint = endpoint.startsWith("/api/") 
+  const cleanEndpoint = endpoint.startsWith("/api/")
     ? endpoint.substring(4) // Remove "/api" prefix, keep the "/"
     : endpoint.startsWith("/")
     ? endpoint
     : `/${endpoint}`;
 
   // Extract existing query params if any
-  let [path, existingQuery] = cleanEndpoint.split("?");
+  const [path, existingQuery] = cleanEndpoint.split("?");
   
   // Build query string from params
   const searchParams = new URLSearchParams(existingQuery);

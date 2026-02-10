@@ -50,14 +50,14 @@ export default function DocumentsPage() {
     try {
       setLoading(true);
       if (activeTab === "documents") {
-        const res = await apiGet<{ data: any[]; pagination: any }>("/documents");
+        const res = await apiGet<any[]>("/documents");
         if (res.success && res.data) {
-          setDocuments(res.data);
+          setDocuments(res.data || []);
         }
       } else {
-        const res = await apiGet<{ data: any[]; pagination: any }>("/documents/templates");
+        const res = await apiGet<any[]>("/documents/templates");
         if (res.success && res.data) {
-          setTemplates(res.data);
+          setTemplates(res.data || []);
         }
       }
 
@@ -166,12 +166,12 @@ export default function DocumentsPage() {
   const documentColumns = [
     {
       key: "name",
-      label: "Nom",
+      header: "Nom",
       render: (record: any) => record.name,
     },
     {
       key: "type",
-      label: "Type",
+      header: "Type",
       render: (record: any) => {
         const typeMap: Record<string, string> = {
           CERTIFICATE: "Certificat",
@@ -184,7 +184,7 @@ export default function DocumentsPage() {
     },
     {
       key: "student",
-      label: "Élève",
+      header: "Élève",
       render: (record: any) =>
         record.student
           ? `${record.student.firstName} ${record.student.lastName}`
@@ -192,7 +192,7 @@ export default function DocumentsPage() {
     },
     {
       key: "fileName",
-      label: "Fichier",
+      header: "Fichier",
       render: (record: any) => (
         <a
           href={record.fileUrl}
@@ -206,12 +206,12 @@ export default function DocumentsPage() {
     },
     {
       key: "createdAt",
-      label: "Date",
+      header: "Date",
       render: (record: any) => formatDate(record.createdAt),
     },
     {
       key: "actions",
-      label: "Actions",
+      header: "Actions",
       render: (record: any) => (
         <Button
           size="sm"
@@ -227,12 +227,12 @@ export default function DocumentsPage() {
   const templateColumns = [
     {
       key: "name",
-      label: "Nom",
+      header: "Nom",
       render: (record: any) => record.name,
     },
     {
       key: "type",
-      label: "Type",
+      header: "Type",
       render: (record: any) => {
         const typeMap: Record<string, string> = {
           CERTIFICATE: "Certificat",
@@ -244,7 +244,7 @@ export default function DocumentsPage() {
     },
     {
       key: "actions",
-      label: "Actions",
+      header: "Actions",
       render: (record: any) => (
         <div className="flex gap-2">
           <Button
@@ -280,7 +280,9 @@ export default function DocumentsPage() {
         <div className="flex gap-2">
           <Select
             value={activeTab}
-            onValueChange={(value) => setActiveTab(value as "documents" | "templates")}
+            onChange={(e) =>
+              setActiveTab(e.target.value as "documents" | "templates")
+            }
           >
             <option value="documents">Documents</option>
             <option value="templates">Templates</option>

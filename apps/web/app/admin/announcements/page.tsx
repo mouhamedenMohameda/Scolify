@@ -39,12 +39,12 @@ export default function AnnouncementsPage() {
     try {
       setLoading(true);
       const [announcementsRes, classesRes] = await Promise.all([
-        apiGet<{ data: any[]; pagination: any }>("/announcements"),
+        apiGet<any[]>("/announcements"),
         apiGet<{ classes: any[] }>("/classes"),
       ]);
 
       if (announcementsRes.success && announcementsRes.data) {
-        setAnnouncements(announcementsRes.data);
+        setAnnouncements(announcementsRes.data || []);
       }
       if (classesRes.success && classesRes.data) {
         setClasses(classesRes.data.classes || []);
@@ -93,12 +93,12 @@ export default function AnnouncementsPage() {
   const columns = [
     {
       key: "title",
-      label: "Titre",
+      header: "Titre",
       render: (record: any) => record.title,
     },
     {
       key: "type",
-      label: "Type",
+      header: "Type",
       render: (record: any) => {
         const typeMap: Record<string, { label: string; color: string }> = {
           URGENT: { label: "Urgent", color: "text-red-600" },
@@ -111,7 +111,7 @@ export default function AnnouncementsPage() {
     },
     {
       key: "targetAudience",
-      label: "Audience",
+      header: "Audience",
       render: (record: any) => {
         if (record.targetAudience.includes("ALL")) {
           return "Tous";
@@ -121,17 +121,18 @@ export default function AnnouncementsPage() {
     },
     {
       key: "publishDate",
-      label: "Date publication",
+      header: "Date publication",
       render: (record: any) => formatDate(record.publishDate),
     },
     {
       key: "expiryDate",
-      label: "Date expiration",
-      render: (record: any) => record.expiryDate ? formatDate(record.expiryDate) : "-",
+      header: "Date expiration",
+      render: (record: any) =>
+        record.expiryDate ? formatDate(record.expiryDate) : "-",
     },
     {
       key: "actions",
-      label: "Actions",
+      header: "Actions",
       render: (record: any) => (
         <Button
           size="sm"

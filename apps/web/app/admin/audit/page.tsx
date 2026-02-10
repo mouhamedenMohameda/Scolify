@@ -31,12 +31,10 @@ export default function AuditPage() {
       if (filters.dateFrom) params.append("dateFrom", filters.dateFrom);
       if (filters.dateTo) params.append("dateTo", filters.dateTo);
 
-      const res = await apiGet<{ data: any[]; pagination: any }>(
-        `/audit-logs?${params.toString()}`
-      );
+      const res = await apiGet<any[]>(`/audit-logs?${params.toString()}`);
 
       if (res.success && res.data) {
-        setLogs(res.data);
+        setLogs(res.data || []);
       }
     } catch (error) {
       console.error("Error fetching audit logs:", error);
@@ -48,7 +46,7 @@ export default function AuditPage() {
   const columns = [
     {
       key: "user",
-      label: "Utilisateur",
+      header: "Utilisateur",
       render: (record: any) =>
         record.user
           ? `${record.user.firstName} ${record.user.lastName}`
@@ -56,31 +54,31 @@ export default function AuditPage() {
     },
     {
       key: "action",
-      label: "Action",
+      header: "Action",
       render: (record: any) => (
         <span className="font-mono text-sm">{record.action}</span>
       ),
     },
     {
       key: "resourceType",
-      label: "Type ressource",
+      header: "Type ressource",
       render: (record: any) => record.resourceType,
     },
     {
       key: "resourceId",
-      label: "ID ressource",
+      header: "ID ressource",
       render: (record: any) => (
         <span className="font-mono text-xs">{record.resourceId || "-"}</span>
       ),
     },
     {
       key: "createdAt",
-      label: "Date",
+      header: "Date",
       render: (record: any) => formatDate(record.createdAt),
     },
     {
       key: "ipAddress",
-      label: "IP",
+      header: "IP",
       render: (record: any) => record.ipAddress || "-",
     },
   ];

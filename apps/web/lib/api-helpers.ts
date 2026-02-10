@@ -9,7 +9,7 @@ import { handleApiError } from "@/lib/api-error";
 /**
  * Re-export for convenience
  */
-export { requireAuth, requireTenant };
+export { requireAuth, requireTenant, handleApiError };
 
 /**
  * Handle API route with auth

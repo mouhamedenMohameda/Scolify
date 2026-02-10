@@ -13,6 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@school-admin/ui";
 import { Label, Select } from "@school-admin/ui";
 import { useForm } from "react-hook-form";

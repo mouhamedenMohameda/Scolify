@@ -45,12 +45,12 @@ export default function AttendancePage() {
     try {
       setLoading(true);
       const [recordsRes, slotsRes] = await Promise.all([
-        apiGet<{ data: any[]; pagination: any }>("/attendance"),
+        apiGet<any[]>("/attendance"),
         apiGet<{ timetables: any[] }>("/timetables/active"),
       ]);
 
       if (recordsRes.success && recordsRes.data) {
-        setAttendanceRecords(recordsRes.data);
+        setAttendanceRecords(recordsRes.data || []);
       }
 
       if (slotsRes.success && slotsRes.data) {
@@ -85,14 +85,12 @@ export default function AttendancePage() {
           `/enrollments?classId=${slot.classId}&status=ACTIVE`
         ).then((res) => {
           if (res.success && res.data) {
-            // Get student details
-            Promise.all(
-              res.data.enrollments.map((e: any) =>
-                apiGet(`/students/${e.studentId}`).then((r) => r.data?.student)
-              )
-            ).then((studentsData) => {
-              setStudents(studentsData.filter(Boolean));
-            });
+            // Use student data already returned by the enrollments API
+            const studentsFromEnrollments =
+              res.data.enrollments
+                .map((e: any) => e.student)
+                .filter(Boolean) || [];
+            setStudents(studentsFromEnrollments);
           }
         });
       }
@@ -140,18 +138,18 @@ export default function AttendancePage() {
   const columns = [
     {
       key: "student",
-      label: "Élève",
+      header: "Élève",
       render: (record: any) =>
         `${record.student?.firstName || ""} ${record.student?.lastName || ""}`,
     },
     {
       key: "date",
-      label: "Date",
+      header: "Date",
       render: (record: any) => formatDate(record.date),
     },
     {
       key: "status",
-      label: "Statut",
+      header: "Statut",
       render: (record: any) => {
         const statusMap: Record<string, { label: string; color: string }> = {
           PRESENT: { label: "Présent", color: "text-green-600" },
@@ -168,12 +166,12 @@ export default function AttendancePage() {
     },
     {
       key: "subject",
-      label: "Matière",
+      header: "Matière",
       render: (record: any) => record.timetableSlot?.subject?.name || "-",
     },
     {
       key: "isJustified",
-      label: "Justifié",
+      header: "Justifié",
       render: (record: any) => (record.isJustified ? "Oui" : "Non"),
     },
   ];
@@ -203,8 +201,9 @@ export default function AttendancePage() {
                 <div>
                   <Label htmlFor="timetableSlotId">Créneau</Label>
                   <Select
+                    id="timetableSlotId"
                     value={selectedSlot}
-                    onValueChange={setSelectedSlot}
+                    onChange={(e) => setSelectedSlot(e.target.value)}
                   >
                     <option value="">Sélectionner un créneau</option>
                     {timetableSlots.map((slot) => (

@@ -102,7 +102,9 @@ export class ConsentService {
       where: { id: consentId },
       data: {
         given: input.given,
-        givenAt: input.given ? new Date() : existing.givenAt || new Date() : null,
+        // If consent is now given, set current date.
+        // If it's not given, keep previous givenAt (if any) or set to null.
+        givenAt: input.given ? new Date() : existing.givenAt ?? null,
         withdrawnAt: input.given ? null : new Date(),
       },
       include: {
